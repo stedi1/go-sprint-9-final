@@ -1,15 +1,138 @@
 package main
 
 import (
-	"math/rand/v2"
 	"testing"
 
 	"github.com/attic-labs/testify/assert"
 )
 
 // Пишите тесты в этом файле
+// табилчные тесты?
+func TestRandomGenerator(t *testing.T) {
+	tests := []struct {
+		name    string
+		size    int
+		wantLen int
+		isNil   bool
+	}{
+		{
+			name:    "Пустой слайс",
+			size:    0,
+			wantLen: 0,
+			isNil:   true,
+		},
+		{
+			name:    "Отрицательное число",
+			size:    -10,
+			wantLen: 0,
+			isNil:   true,
+		},
+		{
+			name:    "Малый слайс",
+			size:    5,
+			wantLen: 5,
+			isNil:   false,
+		},
+		{
+			name:    "Средний слайс",
+			size:    500,
+			wantLen: 500,
+			isNil:   false,
+		},
+		{
+			name:    "Большой слайс",
+			size:    500_000,
+			wantLen: 500_000,
+			isNil:   false,
+		},
+	}
 
-func TestGeneratorWhen0(t *testing.T) {
+	// тут собственно встраиваем данные из структур для теста
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			randomSlice := generateRandomElements(test.size)
+
+			if test.isNil {
+				assert.Nil(t, randomSlice, "generateRandomElements(%d), должен вернуть nil", test.size)
+				return
+			}
+
+			assert.NotNil(t, randomSlice, "generateRandomElements(%d), должен вернуть слайс 1+", test.size)
+			assert.Equal(t, test.wantLen, len(randomSlice), "слайсы не равны", test.size)
+
+		})
+	}
+}
+
+func TestMaximum(t *testing.T) {
+	tests := []struct {
+		name string
+		data []int
+		want int
+	}{
+		{
+			name: "пустой слайс",
+			data: []int{},
+			want: 0,
+		},
+		{
+			name: "один элемент слайс",
+			data: []int{30},
+			want: 30,
+		},
+		{
+			name: "простой слайс",
+			data: []int{3, 23, 45, 22, 1, 100, 13},
+			want: 100,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			result := maximum(test.data)
+			assert.Equal(t, test.want, result, "maxiumum() ожидание: %d, реальность: %d", test.want, result)
+		})
+	}
+}
+
+func TestMaxChunks(t *testing.T) {
+	tests := []struct {
+		name string
+		data []int
+		want int
+	}{
+		{
+			name: "пустой слайс",
+			data: []int{},
+			want: 0,
+		},
+		{
+			name: "один элемент слайс",
+			data: []int{30},
+			want: 30,
+		},
+		{
+			name: "простой слайс",
+			data: []int{3, 23, 45, 22, 1, 100, 13},
+			want: 100,
+		},
+		{
+			name: "большой слайс",
+			data: []int{3, 23, 45, 22, 1, 100, 13, 100_500, 1234, 23, 85, 500, 500_100, 213_908, 74, 98_761_234, 23_341, 54, 123, 45_123, 734},
+			want: 98_761_234,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			result := maxChunks(test.data)
+			assert.Equal(t, test.want, result, "maxChunks() ожидание: %d, реальность: %d", test.want, result)
+		})
+	}
+}
+
+/* func TestGeneratorWhen0(t *testing.T) {
 	testSlice := generateRandomElements(0)
 	assert.Empty(t, testSlice)
 }
@@ -69,3 +192,4 @@ func TestMaxChunks(t *testing.T) {
 	max = maxChunks(slice)
 	assert.Equal(t, 6000000, max)
 }
+*/

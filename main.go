@@ -62,11 +62,11 @@ func maxChunks(data []int) int {
 		wg.Add(1)
 		go func(index, start, end int) {
 			defer wg.Done()
-			chunkResult[i] = slices.Max(data[start:end])
+			chunkResult[index] = maximum(data[start:end])
 		}(i, startIndex, endIndex)
 	}
 	wg.Wait()
-	return slices.Max(chunkResult)
+	return maximum(chunkResult)
 }
 
 func main() {
